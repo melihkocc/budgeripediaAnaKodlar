@@ -150,7 +150,7 @@ exports.postPayment = async (req, res, next) => {
                     cvv : cvv
                 })
                 await newCreditCart.save()
-                res.status(200).redirect("/"); // Örneğin, başarılı bir yanıt gönder
+                res.status(200).redirect("/payment/success"); // Örneğin, başarılı bir yanıt gönder
             })
             .catch(error => {
                 console.error("Payment Error:", error);
@@ -162,3 +162,8 @@ exports.postPayment = async (req, res, next) => {
         res.status(400);
     }
 };
+
+
+exports.getBasarili = (req,res,next) => {
+    res.render("payment/basarili")
+}

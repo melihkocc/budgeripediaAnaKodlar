@@ -9,4 +9,6 @@ const loginEngelleme = require("../middlewares/account/loginEngelleme")
 router.get("/",loginEngelleme,csrf,sepetAddressBossa,paymentController.getPayment)
 router.post("/",loginEngelleme,csrf,sepetAddressBossa,paymentController.postPayment)
 
+router.get("/success",loginEngelleme,csrf,sepetAddressBossa,paymentController.getBasarili)
+
 module.exports = router
