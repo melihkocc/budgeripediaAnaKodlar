@@ -1,0 +1,30 @@
+extends ../layouts/mainLayout.pug
+block title 
+    title Ana Kategori Düzenle  
+
+block content 
+    .container-fluid.pt-5
+        .container 
+            .border-start.border-5.border-primary.ps-5.mb-5
+                h6.text-primary Budgeripedia
+                h1.display-5.text-uppercase.mb-0 Ana Kategori Düzenle
+            .row 
+                if errorMessage
+                    .alert.alert-danger #{errorMessage}
+                .col-lg-6.mx-auto.border.p-5 
+                    form(method="POST",action="/admin/edit-category")
+                        input(type="hidden",name="_csrf",value=`${csrfToken}`)
+                        input(type="hidden",name="categoryid",value=`${category._id}`)
+                        .mb-3
+                            label.form-label(for="category") Kategori İsmi
+                            input.form-control(type="text", id="category",name="category",value=`${category.name}`)
+                        .mb-3.form-check
+                            if category.status 
+                                input.form-check-input(type="checkbox", id="status",name="status" checked)
+                                label.form-check-label(for="status") Yayınlansın Mı?
+                            else  
+                                input.form-check-input(type="checkbox", id="status",name="status")
+                                label.form-check-label(for="status") Yayınlansın Mı?
+
+                        button.btn.btn-primary(type="submit") Düzenle
+

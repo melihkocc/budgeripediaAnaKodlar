@@ -1,0 +1,53 @@
+extends ../layouts/mainLayout.pug
+block title 
+    title Ürün Düzenle  
+
+block content 
+    .container-fluid.pt-5
+        .container 
+            .border-start.border-5.border-primary.ps-5.mb-5
+                h6.text-primary Budgeripedia
+                h1.display-5.text-uppercase.mb-0 Ürün Düzenle
+            .row 
+                if errorMessage
+                    .alert.alert-danger #{errorMessage}
+                .col-lg-6.mx-auto.border.p-5 
+                    form(method="POST",action="/admin/edit-product",enctype="multipart/form-data")
+                        input(type="hidden",name="_csrf",value=`${csrfToken}`)
+                        input(type="hidden",name="productid",value=`${product._id}`)
+                        .mb-3
+                            label.form-label(for="name") Ürün İsmi
+                            input.form-control(type="text", id="name",name="name",value=`${product.name}`)
+                        .mb-3
+                            label.form-label(for="price") Ürün Fiyatı
+                            input.form-control(type="text", id="price",name="price",value=`${product.price}`)
+                        .mb-3
+                            label.form-label.text-primary(for="salePrice") İndirimli Fiyat -Gerekli Değil-
+                            input.form-control(type="text", id="salePrice",name="salePrice")
+                        .mb-3
+                            label.form-label(for="description") Ürün Açıklaması
+                            textarea(class="form-control", name="description" ,id="description")
+                                | #{product.description}
+                        .mb-3.form-check
+                            if product.status 
+                                input.form-check-input(type="checkbox", id="status",name="status" checked)
+                                label.form-check-label(for="status") Yayınlansın Mı?
+                            else  
+                                input.form-check-input(type="checkbox", id="status",name="status")
+                                label.form-check-label(for="status") Yayınlansın Mı?
+                        .mb-3
+                            h6 Kategoriler
+                            each category in categories
+                                .form-check
+                                    if product.categories.includes(category._id)
+                                        input.form-check-input(type="checkbox", value=`${category._id}`,name="categoryids" ,checked)
+                                        label.form-check-label(for="flexCheckDefault") #{category.name}
+                                    else 
+                                        input.form-check-input(type="checkbox", value=`${category._id}`,name="categoryids")
+                                        label.form-check-label(for="flexCheckDefault") #{category.name}
+                        .mb-3 
+                            img(src=`${product.url}`, alt=`${product.name}`,width="200")
+                            br
+                            input.form-control-file.mt-3(type="file",name="image")
+                        button.btn.btn-primary(type="submit") Düzenle
+

@@ -1,0 +1,33 @@
+extends ../layouts/mainLayout.pug
+block title 
+    title Kayıt Ol 
+
+block content 
+    .container-fluid.pt-5
+        .container 
+            .border-start.border-5.border-primary.ps-5.mb-5
+                h6.text-primary Budgeripedia
+                h1.display-5.text-uppercase.mb-0 Kayıt Ol
+            .row 
+                if errorMessage
+                    .alert.alert-danger #{errorMessage}
+                .col-lg-6.mx-auto.border.p-5 
+                    form(method="POST",action="/register")
+                        input(type="hidden",name="_csrf",value=`${csrfToken}`)
+                        .mb-3
+                            label.form-label(for="name") Ad
+                            input.form-control(type="text", id="name",name="name")
+                        .mb-3
+                            label.form-label(for="lastName") Soyad
+                            input.form-control(type="text", id="lastName",name="lastName")
+                        .mb-3
+                            label.form-label(for="email") Email
+                            input.form-control(type="email", id="email",name="email")
+                        .mb-3
+                            label.form-label(for="password") Şifre
+                            input.form-control(type="password", id="password",name="password")
+                        .mb-3
+                            label.form-label(for="passwordTekrar") Şifre Tekrar
+                            input.form-control(type="password", id="passwordTekrar",name="passwordTekrar")
+                        button.btn.btn-primary(type="submit") Kayıt Ol
+

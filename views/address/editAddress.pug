@@ -1,0 +1,93 @@
+extends ../layouts/mainLayout.pug
+
+block title 
+    title Adres Düzenle
+
+
+block content
+
+    h1 Adres Düzenle
+    .container.mt-5.mb-5
+        .row
+            .col-md-9.col-sm-12
+                .w-100
+                    .row.d-flex.justify-content-evenly
+                        .col-md-5.col-sm-12.border.border-1.border-primary.rounded-pill
+                            .w-100.d-flex.align-items-center.p-3
+                                p.p-0.m-0.border.border-1.border-secondary-subtle.px-3.py-2.rounded-circle.bg-primary 1
+                                p.p-0.m-0.ms-5.fs-5.text-primary
+                                    i.fa-solid.fa-location-dot
+                                    |  Adres Bilgileri
+                .card.w-100.mt-5
+                    .card-body
+                        if errorMessage
+                            .alert.alert-danger #{errorMessage}
+                        form.row.g-3(method="POST",action="/address/edit-address")
+                            input(type="hidden",name="_csrf",value=`${csrfToken}`)
+                            input(type="hidden",name="userAddressid",value=`${userAddress._id}`)
+                            .col-md-6
+                                label.form-label(for="inputEmail4") Ülke Seçiniz
+                                    span.text-danger *
+                                select.form-select(name="country" aria-label="Default select example" required)
+                                    option(value="",disabled) Ülke Seçiniz
+                                    option(value="Türkiye",selected) Türkiye
+                            .col-md-6
+                                label.form-label(for="inputPassword4") İl Seçiniz
+                                    span.text-danger *
+                                select.form-select(id="city" name="city" required)
+                                    option(value="",disabled,selected) Şehir Seçiniz
+                            .col-12
+                                label.form-label(for="addressLine1") Adres
+                                    span.text-danger *
+                                textarea.form-control(id="addressLine1" name="addressLine1" placeholder="Adres Giriniz" required)
+                                    | #{userAddress.addressLine1}
+                            .col-12
+                                label.form-label(for="addressLine2") Adres 2
+                                textarea.form-control(id="addressLine2" name="addressLine2")
+                                    | #{userAddress.addressLine2}
+                            .col-md-6
+                                label.form-label(for="district") İlçe Giriniz
+                                    span.text-danger *
+                                input.form-control(id="district" name="district" required value=`${userAddress.district}`)
+                            .col-md-6
+                                label.form-label(for="semt") Semt Giriniz
+                                    span.text-danger *
+                                input.form-control(id="semt" name="semt" required value=`${userAddress.semt}`)
+                            .col-md-6
+                                label.form-label(for="phoneNumber") Telefon Numarası
+                                    span.text-danger *
+                                input.form-control(type="text" id="phoneNumber" name="phoneNumber" pattern="[0-9]{11}" placeholder="Örnek: 05551234567" required value=`${userAddress.phoneNumber}`)
+                                small Lütfen geçerli bir telefon numarası girin. (05551234567)
+                            .col-md-6
+                                label.form-label(for="postalCode") Posta Kodu Giriniz
+                                    span.text-danger *
+                                input.form-control(type="text" id="postalCode" name="postalCode" pattern="[0-9]{5}" placeholder="Lütfen geçerli bir posta kodu girin (örnek: 12345)" required value=`${userAddress.postalCode}`)
+                            .col-12
+                                button.btn.btn-primary(type="submit") Adresi Kaydet
+
+    script.
+        const iller = [
+            "Adana", "Adıyaman", "Afyonkarahisar", "Ağrı", "Amasya", "Ankara", "Antalya", "Artvin", 
+            "Aydın", "Balıkesir", "Bartın", "Batman", "Bayburt", "Bilecik", "Bingöl", "Bitlis", 
+            "Bolu", "Burdur", "Bursa", "Çanakkale", "Çankırı", "Çorum", "Denizli", "Diyarbakır", 
+            "Düzce", "Edirne", "Elazığ", "Erzincan", "Erzurum", "Eskişehir", "Gaziantep", "Giresun", 
+            "Gümüşhane", "Hakkâri", "Hatay", "Iğdır", "Isparta", "İstanbul", "İzmir", "Kahramanmaraş", 
+            "Karabük", "Karaman", "Kars", "Kastamonu", "Kayseri", "Kırıkkale", "Kırklareli", "Kırşehir", 
+            "Kilis", "Kocaeli", "Konya", "Kütahya", "Malatya", "Manisa", "Mardin", "Mersin", "Muğla", 
+            "Muş", "Nevşehir", "Niğde", "Ordu", "Osmaniye", "Rize", "Sakarya", "Samsun", "Şanlıurfa", 
+            "Siirt", "Sinop", "Sivas", "Şırnak", "Tekirdağ", "Tokat", "Trabzon", "Tunceli", "Uşak", 
+            "Van", "Yalova", "Yozgat", "Zonguldak"
+        ];
+        const userAddress = (!{JSON.stringify(userAddress)})
+        console.log(userAddress.city)
+        const ilSelect = document.getElementById("city");
+
+        iller.forEach((il, index) => {
+            const option = document.createElement("option");
+            option.value = il;
+            option.text = il;
+            if(il.toString() === userAddress.city.toString()){
+                option.selected = true
+            }
+            ilSelect.appendChild(option);
+        });

@@ -1,0 +1,29 @@
+{
+  "name": "budgeripedia.com",
+  "version": "1.0.0",
+  "description": "Budgeripedia Websitesi",
+  "main": "script.js",
+  "scripts": {
+    "start" : "node script.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Melih Koç",
+  "license": "ISC",
+  "dependencies": {
+    "archetype": "^0.13.0",
+    "bcrypt": "^5.1.1",
+    "body-parser": "^1.20.2",
+    "cloudinary": "^2.0.1",
+    "connect-mongodb-session": "^2.4.1",
+    "csurf": "^1.11.0",
+    "dotenv": "^16.4.1",
+    "express": "^4.18.2",
+    "express-fileupload": "^1.4.3",
+    "express-session": "^1.18.0",
+    "iyzipay": "^2.0.61",
+    "mongoose": "^8.1.1",
+    "pug": "^3.0.2",
+    "uuid": "^9.0.1",
+    "validator": "^13.11.0"
+  }
+}

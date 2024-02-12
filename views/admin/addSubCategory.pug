@@ -1,0 +1,30 @@
+extends ../layouts/mainLayout.pug
+block title 
+    title Alt Kategori Ekle  
+
+block content 
+    .container-fluid.pt-5
+        .container 
+            .border-start.border-5.border-primary.ps-5.mb-5
+                h6.text-primary Budgeripedia
+                h1.display-5.text-uppercase.mb-0 Alt Kategori Ekle
+            .row 
+                if errorMessage
+                    .alert.alert-danger #{errorMessage}
+                .col-lg-6.mx-auto.border.p-5 
+                    form(method="POST",action="/admin/add-subCategory")
+                        input(type="hidden",name="_csrf",value=`${csrfToken}`)
+                        .mb-3
+                            label.form-label(for="category") Kategori İsmi
+                            input.form-control(type="text", id="category",name="category")
+                        .mb-3.form-check
+                            input.form-check-input(type="checkbox", id="status",name="status")
+                            label.form-check-label(for="status") Yayınlansın Mı?
+                        .mb-3
+                            select.form-select(name="ustCategory", id="ustCategory")
+                                option(value="") Hangi Üst Kategori Altında Olsun?
+                                each category in categories
+                                    option(value=`${category._id}`) #{category.name}
+
+                        button.btn.btn-primary(type="submit") Ekle
+

@@ -1,0 +1,107 @@
+extends ../layouts/mainLayout.pug
+
+block title 
+    title Adres
+
+
+block content
+
+    .container.mt-5.mb-5
+        .row
+            .col-md-9.col-sm-12
+                .w-100
+                    .row.d-flex.justify-content-evenly
+                        .col-md-5.col-sm-12.border.border-1.border-primary.rounded-5
+                            .w-100.d-flex.align-items-center.p-3
+                                p.p-0.m-0.border.border-1.border-secondary-subtle.px-3.py-2.rounded-circle.bg-primary 1
+                                p.p-0.m-0.ms-5.fs-5.text-primary
+                                    i.fa-solid.fa-location-dot
+                                    |  Adres Bilgileri
+                        .col-md-5.col-sm-12.border.border-1.border-secondary-subtle.rounded-5
+                            .w-100.d-flex.align-items-center.p-3
+                                p.p-0.m-0.border.border-1.border-secondary-subtle.px-3.py-2.rounded-circle.bg-secondary-subtle 2
+                                p.p-0.m-0.ms-5.fs-5.text-secondary
+                                    i.fa-solid.fa-credit-card
+                                    |  Ödeme Bilgileri
+                .card.w-100.mt-5
+                    .card-body.w-100
+                        .w-100.d-flex.justify-content-between.align-items-center
+                            .d-flex.align-items-center.text-primary
+                                i.fa-solid.fa-location-dot
+                                small.ms-2  ADRES SEÇİMİ
+                            a(href="/address/add-address"): button.d-flex.align-items-center.px-5.py-2.btn.btn-primary.rounded-pill
+                                i.fa-solid.fa-location-dot
+                                span.ms-3  Yeni Adres+
+                        .row.mt-2
+                            each userAddress in userAddresses
+                                .col-sm-6
+                                    .card.mt-3(style="width: 100%")
+                                        .card-body.w-100
+                                            .d-flex.justify-content-start
+                                                if userAddress._id.toString() == userAddress.user.selectedAddress.toString()
+                                                    i.fa-solid.fa-check.border.border-1.border.success.p-2.rounded-circle.text-success
+                                            .d-flex.justify-content-end.align-items-center
+                                                a(href=`/address/edit-address/${userAddress._id}`): button.btn.btn-primary.rounded-pill
+                                                    i.fa-solid.fa-pen
+                                                    span.ms-2  Düzenle
+                                                a(href=`/address/delete-address/${userAddress._id}`): button.btn.btn-danger.rounded-pill.ms-3.text-white
+                                                    i.fa-solid.fa-trash
+                                                    span.ms-2  Sil
+                                            .d-flex.flex-column
+                                                span.fw-bold  - #{userAddress.user.name} #{userAddress.user.lastName}
+                                                small  #{userAddress.addressLine1}
+                                                small  #{userAddress.semt} / #{userAddress.district} / #{userAddress.city} / #{userAddress.country} /
+                                                small  #{userAddress.phoneNumber}
+                            .col-sm-12.mt-5
+                                h6.text-primary  Teslimatın Yapılacağı Adresi Seçin
+                                form(method="POST",action="/address/select-address")
+                                    input(type="hidden",name="_csrf",value=`${csrfToken}`)
+                                    select.form-select(aria-label="Default select example", name="selectUserAddress" ,required)
+                                        option(value="" disabled selected)  Teslimatın Yapılacağı Adresi Seçiniz
+                                        each userAddress in userAddresses
+                                            option(value=`${userAddress._id}`)  #{userAddress.city} / #{userAddress.district} / #{userAddress.semt} / #{userAddress.phoneNumber}
+                                    button.btn.btn-primary.mt-2(type="submit")  Ödeme Sayfasına Git
+            .col-md-3.col-sm-12
+                .accordion#accordionPanelsStayOpenExample
+                    .accordion-item
+                        h2.accordion-header
+                            button.accordion-button(type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne")
+                                .w-100.d-flex.justify-content-between.align-items-center
+                                    span Sipariş Özet
+                        #panelsStayOpen-collapseOne.accordion-collapse.collapse.show
+                            .accordion-body
+                                each item in cart.products.items
+                                    .w-100.d-flex.align-items-center
+                                        img.me-3(src=`${item.productId.url}` alt="img" width="50px")
+                                        .d-flex.flex-column
+                                            span.fw-bold(style="font-size: 12px;") #{item.productId.name}
+                                            span(style="font-size: 12px;") #{item.productId.description}
+                                            span(style="font-size: 12px;") #{item.quantity} Adet
+                                            if item.productId.salePrice
+                                                -var totalPrice = 0;
+                                                - totalPrice = item.productId.salePrice * item.quantity 
+                                                span(style="font-size: 12px;")
+                                                    | #{totalPrice.toFixed(2)} TL
+                                            else
+                                                -var totalPrice = 0;
+                                                - totalPrice = item.productId.price * item.quantity
+                                                span(style="font-size: 12px;")
+                                                    | #{totalPrice.toFixed(2)} TL
+                                    hr
+
+                    // Sepet toplamı
+                    .w-100.p-0.m-0.border.border-1.border-secondary-subtle.rounded-2.mt-5
+                        .w-100.d-flex.justify-content-between.align-items-center.p-3
+                            span Sepet Toplamı
+                            - var cartTotalPrice = 0;
+                            each item in cart.products.items
+                                - var totalPrice = 0;
+                                if item.productId.salePrice 
+                                    - totalPrice = item.productId.salePrice * item.quantity
+                                else 
+                                    - totalPrice = item.productId.price * item.quantity
+                                - cartTotalPrice += totalPrice
+                            span #{cartTotalPrice.toFixed(2)} TL
+                        .w-100.d-flex.justify-content-between.align-items-center.px-3.pb-3
+                            span Genel Toplamı
+                            span  #{cartTotalPrice.toFixed(2)} TL

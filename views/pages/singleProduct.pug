@@ -1,0 +1,66 @@
+extends ../layouts/mainLayout.pug
+
+block title 
+    title #{product.name} 
+    script.
+        function increaseQuantity() {
+            var quantityInput = document.getElementById('quantity');
+            var currentQuantity = parseInt(quantityInput.value);
+            quantityInput.value = currentQuantity + 1;
+        }
+
+        function decreaseQuantity() {
+            var quantityInput = document.getElementById('quantity');
+            var currentQuantity = parseInt(quantityInput.value);
+            if (currentQuantity > 1) {
+                quantityInput.value = currentQuantity - 1;
+            }
+        }
+
+
+
+block content
+    // About Start
+    .container-fluid.py-5
+        .container
+            .row.gx-5
+                .col-lg-5.mb-5.mb-lg-0(style="min-height: 500px;")
+                    .position-relative.h-100
+                        img.position-absolute.w-100.h-100.rounded(src=`${product.url}`, style="object-fit: cover;")
+                .col-lg-7
+                    .border-start.border-5.border-primary.ps-5.mb-5
+                        h4.text-uppercase.mb-0 #{product.name}
+                    h5.text-body.mb-4 #{product.description}
+                    hr
+                    if product.salePrice
+                        h5: s.text-primary.mb-0 #{product.price},00 TL
+                        h5 #{product.salePrice},00 TL
+                    else 
+                        h5.text-primary.mb-0 #{product.price},00 TL
+                    .mb-3 
+                        form#quantityForm(method="POST",action="/cart/add-cart")
+                            input(type="hidden",name="_csrf",value=`${csrfToken}`)
+                            input(type="hidden",name="productid",value=`${product._id}`)
+                            .form-group
+                                label(for="quantity") Miktar:
+                                .input-group
+                                    .input-group-prepend
+                                        button.btn.btn-outline-secondary(type="button", onclick="decreaseQuantity()") -
+                                    input.form-control.text-center#quantity(value="1", readonly,name="quantity")
+                                    .input-group-append
+                                        button.btn.btn-outline-secondary(type="button", onclick="increaseQuantity()") +
+                                button.btn.btn-primary.mt-2.w-100(type="submit") Sepete Ekle
+
+                    .bg-light.p-4
+                        ul.nav.nav-pills.justify-content-between.mb-3#pills-tab(role="tablist")
+                            li.nav-item.w-50(role="presentation")
+                                button.nav-link.text-uppercase.w-100.active#pills-1-tab(data-bs-toggle="pill", data-bs-target="#pills-1", type="button", role="tab", aria-controls="pills-1", aria-selected="true") Ürün Açıklaması
+                            li.nav-item.w-50(role="presentation")
+                                button.nav-link.text-uppercase.w-100#pills-2-tab(data-bs-toggle="pill", data-bs-target="#pills-2", type="button", role="tab", aria-controls="pills-2", aria-selected="false") Our Vision
+                        .tab-content#pills-tabContent
+                            .tab-pane.fade.show.active#pills-1(role="tabpanel", aria-labelledby="pills-1-tab")
+                                p.mb-0 #{product.description}
+                            .tab-pane.fade#pills-2(role="tabpanel", aria-labelledby="pills-2-tab")
+                                p.mb-0 Tempor erat elitr at rebum at at clita aliquyam consetetur. Diam dolor diam ipsum et, tempor voluptua sit consetetur sit. Aliquyam diam amet diam et eos sadipscing labore. Clita erat ipsum et lorem et sit, sed stet no labore lorem sit. Sanctus clita duo justo et tempor consetetur takimata eirmod, dolores takimata consetetur invidunt magna dolores aliquyam dolores dolore. Amet erat amet et magna
+    // About End
+

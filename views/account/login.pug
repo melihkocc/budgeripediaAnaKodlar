@@ -1,0 +1,24 @@
+extends ../layouts/mainLayout.pug
+block title 
+    title Giriş Yap  
+
+block content 
+    .container-fluid.pt-5
+        .container 
+            .border-start.border-5.border-primary.ps-5.mb-5
+                h6.text-primary Budgeripedia
+                h1.display-5.text-uppercase.mb-0 Giriş Yap
+            .row 
+                if errorMessage
+                    .alert.alert-danger #{errorMessage}
+                .col-lg-6.mx-auto.border.p-5 
+                    form(method="POST",action="/login")
+                        input(type="hidden",name="_csrf",value=`${csrfToken}`)
+                        .mb-3
+                            label.form-label(for="email") Email
+                            input.form-control(type="email", id="email",name="email")
+                        .mb-3
+                            label.form-label(for="password") Şifre
+                            input.form-control(type="password", id="password",name="password")
+                        button.btn.btn-primary(type="submit") Giriş Yap
+

@@ -1,0 +1,147 @@
+extends ../layouts/mainLayout.pug
+block title 
+    title Anasayfa 
+
+block content 
+
+    // Hero Start
+    .container-fluid.bg-primary.py-5.mb-5.hero-header
+        .container.py-5
+            .row.justify-content-start
+                .col-lg-8.text-center.text-lg-start
+                    h1.display-1.text-uppercase.text-dark.mb-lg-4 Pet Shop
+                    h1.text-uppercase.text-white.mb-lg-4 Make Your Pets Happy
+                    p.fs-4.text-white.mb-lg-4 Dolore tempor clita lorem rebum kasd eirmod dolore diam eos kasd. Kasd clita ea justo est sed kasd erat clita sea
+                    .d-flex.align-items-center.justify-content-center.justify-content-lg-start.pt-5
+                        a.btn.btn-outline-light.border-2.py-md-3.px-md-5.me-5(href="") Read More
+                        button.btn-play(type="button", data-bs-toggle="modal", data-src="https://www.youtube.com/embed/DWRcNpR6Kdc", data-bs-target="#videoModal")
+                            span
+                        h5.font-weight-normal.text-white.m-0.ms-4.d-none.d-sm-block Play Video
+    // Hero End
+
+
+    // Products Start
+    .container-fluid.py-5
+        .container
+            .border-start.border-5.border-primary.ps-5.mb-5(style="max-width: 600px;")
+                h6.text-primary.text-uppercase Ürünler
+                h1.display-5.text-uppercase.mb-0 Son Eklenenler
+            .owl-carousel.product-carousel
+                    each lastProduct in lastProducts
+                        if lastProduct.status
+                            .pb-5
+                                .product-item.position-relative.bg-light.d-flex.flex-column.text-center
+                                    a(href=`/product/${lastProduct._id}`): img.w-100.img-fluid.mb-4(src=`${lastProduct.url}`, alt=`${lastProduct.name}`,style="height:200px;")
+                                    a(href=`/product/${lastProduct._id}`): h6.text-uppercase #{lastProduct.name}
+                                    span(style="height:50px") #{lastProduct.description}
+                                    if lastProduct.salePrice
+                                        .d-flex.justify-content-between.align-items-center.m-0.p-0
+                                            h5: s.text-primary.mb-0 #{lastProduct.price},00 TL
+                                            a(href=`/product/${lastProduct._id}`): h5 #{lastProduct.salePrice},00 TL
+                                    else 
+                                        a(href=`/product/${lastProduct._id}`): h5.text-primary.mb-0 #{lastProduct.price},00 TL
+                                    form(method="POST",action="/cart/add-cart").btn-action.d-flex.justify-content-center
+                                        input(type="hidden",name="_csrf",value=`${csrfToken}`)
+                                        input(type="hidden",name="productid",value=`${lastProduct._id}`)
+                                        input(type="hidden",name="quantity",value="1")
+                                        a.btn.btn-primary.py-2.px-3(href=""): button(type="submit",style="border:none;").bg-primary
+                                            i.bi.bi-cart.text-white
+                                        a.btn.btn-primary.py-2.px-3(href=`/product/${lastProduct._id}`)
+                                            i.bi.bi-eye
+
+    // Products End
+
+    .container.mt-5
+        .row 
+            .col-sm-3.mt-5
+                .d-flex.flex-column.justify-content-center
+                    h6 Kedi Ürünleri
+                    img(src="https://www.ozelyem.com/Data/BlockUploadData/banner/img1/1349/2-tr-1-tr.jpg?1703141453", alt="kedi")
+
+            .col-sm-3.mt-5
+                .d-flex.flex-column.justify-content-center
+                    h6 Balık Yemleri
+                    img(src="https://www.ozelyem.com/Data/BlockUploadData/banner/img1/1349/15-tr-2-tr.jpg?1703159814", alt="balik")
+
+            .col-sm-3.mt-5
+                .d-flex.flex-column.justify-content-center
+                    h6 Kuş Ürünleri
+                    img(src="https://www.ozelyem.com/Data/BlockUploadData/banner/img1/1349/14-tr-4-tr.jpg?1703141612", alt="kus")
+
+            .col-sm-3.mt-5
+                .d-flex.flex-column.justify-content-center
+                    h6 Akvaryum Ürünleri
+                    img(src="https://www.ozelyem.com/Data/BlockUploadData/banner/img1/1349/filtreler-3-tr.jpg?1703141489", alt="akvaryum")
+
+
+            .col-sm-3.mt-5
+                .d-flex.flex-column.justify-content-center
+                    h6 Köpek Ürünleri
+                    img(src="https://www.ozelyem.com/Data/BlockUploadData/banner/img1/1350/1-tr-1-tr.jpg?1703143459", alt="kopek")
+
+            .col-sm-3.mt-5
+                .d-flex.flex-column.justify-content-center
+                    h6 Kemirgen Ürünleri
+                    img(src="https://www.ozelyem.com/Data/BlockUploadData/banner/img1/1350/12-tr-2-tr.jpg?1703143530", alt="kemirgen")
+
+            .col-sm-3.mt-5
+                .d-flex.flex-column.justify-content-center
+                    h6 Sürüngen Ürünleri
+                    img(src="https://www.ozelyem.com/Data/BlockUploadData/banner/img1/1350/13-tr-3-tr.jpg?1703143546", alt="surungen")
+
+            .col-sm-3.mt-5
+                .d-flex.flex-column.justify-content-center
+                    h6 Akvaryum Filtreleri
+                    img(src="https://www.ozelyem.com/Data/BlockUploadData/banner/img1/1350/15-tr-4-tr.jpg?1703143587", alt="akvaryumFiltre")
+
+    
+    .container.mt-5 
+        .row 
+            .col-sm-12 
+                h6.text-center.mt-5.mb-4.text-primary Öne Çıkan Kategoriler
+                div.owl-carousel.product-carousel
+                    div.pb-5
+                        div.product-item.position-relative.d-flex.flex-column.text-center
+                            img.mx-auto.rounded-circle.img-fluid.mb-4(src="https://www.ozelyem.com/Data/BlockUploadData/slider/img1/288/1-tr.jpg?1706171136",style="width:150px")
+                            h6.text-uppercase Köpek Taşıma
+
+                    div.pb-5
+                        div.product-item.position-relative.d-flex.flex-column.text-center
+                            img.mx-auto.rounded-circle.img-fluid.mb-4(src="https://www.ozelyem.com/Data/BlockUploadData/slider/img1/288/2-tr.jpg?1706171136",style="width:150px")
+                            h6.text-uppercase Kedi Maması
+
+                    div.pb-5
+                        div.product-item.position-relative.d-flex.flex-column.text-center
+                            img.mx-auto.rounded-circle.img-fluid.mb-4(src="https://www.ozelyem.com/Data/BlockUploadData/slider/img1/288/12-tr.jpg?1706171136",style="width:150px")
+                            h6.text-uppercase Balık
+
+                    div.pb-5
+                        div.product-item.position-relative.d-flex.flex-column.text-center
+                            img.mx-auto.rounded-circle.img-fluid.mb-4(src="https://www.ozelyem.com/Data/BlockUploadData/slider/img1/288/14-tr.jpg?1706171136",style="width:150px")
+                            h6.text-uppercase Kuş Aksesuarları
+
+                    div.pb-5
+                        div.product-item.position-relative.d-flex.flex-column.text-center
+                            img.mx-auto.rounded-circle.img-fluid.mb-4(src="https://www.ozelyem.com/Data/BlockUploadData/slider/img1/288/13-tr.jpg?1706171136",style="width:150px")
+                            h6.text-uppercase Dış Filtreler
+
+
+    .container.mt-5 
+        .row 
+            .col-sm-4
+                img(src="https://www.ozelyem.com/Data/BlockUploadData/banner/img1/284/1-tr.jpg?1706171136", alt="")
+            .col-sm-4.p-0
+                img(src="https://www.ozelyem.com/Data/BlockUploadData/banner/img1/284/2-tr.jpg?1706171136", alt="")
+            .col-sm-4.p-0 
+                img(src="https://www.ozelyem.com/Data/BlockUploadData/banner/img1/284/3-tr.jpg?1706171136", alt="")
+                
+    .container.mt-5
+        .row 
+            .col-sm-6.mt-5
+                img(src="https://www.ozelyem.com/Data/BlockUploadData/banner/img1/286/1-tr.jpg?1706171136", alt="")
+            .col-sm-6.mt-5 
+                img(src="https://www.ozelyem.com/Data/BlockUploadData/banner/img1/286/2-tr.jpg?1706171136", alt="")
+            .col-sm-6.mt-5
+                img(src="https://www.ozelyem.com/Data/BlockUploadData/banner/img1/286/3-tr.jpg?1706171136", alt="")
+            .col-sm-6.mt-5
+                img(src="https://www.ozelyem.com/Data/BlockUploadData/banner/img1/286/22-tr.jpg?1706171136", alt="")

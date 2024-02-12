@@ -1,0 +1,42 @@
+extends ../layouts/mainLayout.pug
+
+block title 
+    title Ödeme Sayfası
+
+
+block content
+
+    h1 Ödeme Sayfası
+    .container.mt-5.mb-5
+        .row
+            .col-md-9.col-sm-12
+                .w-100
+                    .row.d-flex.justify-content-evenly
+                        .col-md-5.col-sm-12.border.border-1.border-primary.rounded-pill
+                            .w-100.d-flex.align-items-center.p-3
+                                p.p-0.m-0.ms-5.fs-5.text-primary
+                                    i.fa-regular.fa-credit-card
+                                    |  Kart Bilgileri
+                .card.w-100.mt-5
+                    .card-body
+                        if errorMessage
+                            .alert.alert-danger #{errorMessage}
+                        form.row.g-3(method="POST",action="/payment")
+                            input(type="hidden",name="_csrf",value=`${csrfToken}`)
+                            .col-12
+                                label.form-label(for="nameSurname") İsim Soyisim
+                                input.form-control(type="text" id="nameSurname" name="nameSurname" placeholder="İsim Soyisim Giriniz" required)
+                            .col-12
+                                label.form-label(for="creditCardNumber") Kart Numarası
+                                input.form-control(type="text" id="creditCardNumber" name="creditCardNumber" pattern="[0-9]{16}" placeholder="16 haneli kredi kartı numarasını giriniz" required)
+                            .col-md-4
+                                label.form-label(for="expirationMonth") Ay
+                                input.form-control(type="number" id="expirationMonth" name="expirationMonth" min="1" max="12" pattern="[0-9]+" placeholder="Geçerli bir ay giriniz" required)
+                            .col-md-4
+                                label.form-label(for="expirationYear") Expiration Year:
+                                input.form-control(type="number" id="expirationYear" name="expirationYear" min="2023" pattern="[0-9]+" placeholder="Geçerli bir yıl giriniz" required)
+                            .col-md-4
+                                label.form-label(for="cvv") CVV:
+                                input.form-control(type="text" id="cvv" name="cvv" pattern="[0-9]{3,4}" placeholder="Geçerli bir CVV giriniz" required)
+                            .col-12
+                                button.btn.btn-primary(type="submit") Siparişi Tamamla

@@ -1,0 +1,211 @@
+extends ../layouts/mainLayout.pug
+block title 
+    title Sepet 
+
+
+block content 
+    if !products || products.length <= 0 
+        h1.text-center.mt-5.mb-5 Sepetiniz Boş
+        a(href="/"): button.d-block.mx-auto.btn.btn-primary Alışverişe Devam Et 
+    else
+        .container.px-3.my-5.clearfix
+            .card
+                .card-header
+                    h2 Shopping Cart
+                .card-body
+                    .table-responsive
+                        table.table.table-bordered.m-0
+                            thead
+                                tr
+                                    th.text-center.py-3.px-4(style="min-width: 400px;") Ürün İsmi & Detaylar
+                                    th.text-right.py-3.px-4(style="width: 100px;") Fiyat
+                                    th.text-center.py-3.px-5(style="width: 120px;") Adeti
+                                    th.text-right.py-3.px-4(style="width: 100px;") Toplam
+                                    th.text-center.align-middle.py-3.px-0(style="width: 40px;")
+                                        a.shop-tooltip.float-none.text-light(href="#" title="" data-original-title="Clear cart")
+                                            i.ino.ion-md-trash
+                            tbody
+                                each product in products
+                                    tr
+                                        td.p-4
+                                            .media.align-items-center
+                                                img.d-block.ui-w-40.ui-bordered.mr-4(src=`${product.product.url}`, alt=`${product.product.name}`,width="100px")
+                                            .media-body
+                                                a(href=`/product/${product.product._id}` class="d-block text-dark") #{product.product.name}
+
+                                        if product.product.salePrice
+                                            td.text-right.font-weight-semibold.align-middle.p-4.productPrice(id=`productPrice-${product.product._id}`) #{product.product.salePrice.toFixed(2)} TL
+                                        else 
+                                            td.text-right.font-weight-semibold.align-middle.p-4.productPrice(id=`productPrice-${product.product._id}`) #{product.product.price.toFixed(2)} TL
+                                        td.d-flex
+                                            .input-group-prepend
+                                                button.btn.btn-outline-secondary.decreaseButton(type="button",id=`decreaseButton-${product.product._id}`, onclick=`decreaseQuantity('${product.product._id}')`) -
+                                            input.bg-white.form-control.text-center.quantity-input(value=`${product.quantity}`,readonly,id=`quantity-${product.product._id}` ,name="quantity")
+                                            .input-group-append
+                                                button.btn.btn-outline-secondary.increaseButton(type="button",id=`increaseButton-${product.product._id}`, onclick=`increaseQuantity('${product.product._id}')`) +
+                                        td.text-right.font-weight-semibold.align-middle.p-4.productTotalPrice(id=`productTotalPrice-${product.product._id}`) 
+                                            - var productTotalPrice = 0;
+                                            if product.product.salePrice 
+                                                - productTotalPrice = product.product.salePrice * product.quantity 
+                                            else    
+                                                - productTotalPrice = product.product.price * product.quantity 
+                                            | #{productTotalPrice.toFixed(2)} TL
+                                        td.text-center.align-middle.px-0
+                                            form(method="POST",action="/cart/remove-product-cart") 
+                                                input(type="hidden",name="_csrf",value=`${csrfToken}`)
+                                                input(type="hidden", name="productid",value=`${product.product._id}`)
+                                                button.btn(type="submit"): .shop-tooltip.close.float-none.text-danger ×
+
+                    .d-flex.flex-wrap.justify-content-between.align-items-center.pb-4
+                        .d-flex
+                            .text-right.mt-4
+                                label.text-muted.font-weight-normal.m-0 Total price
+                                div.text-large
+                                    strong#totalPrice
+                                        - var totalPrice = 0;
+                                        each product in products
+                                            if product.product.salePrice 
+                                                - var productTotal = product.product.salePrice * product.quantity
+                                            else 
+                                                - var productTotal = product.product.price * product.quantity
+                                            - totalPrice += productTotal;
+
+                                        | #{totalPrice.toFixed(2)} TL
+
+                    .float-right
+                        a(href="/"): button.btn.btn-lg.btn-default.md-btn-flat.mt-2.mr-3(type="button") Alışverişe Devam Et
+                        button.btn.btn-lg.btn-primary.mt-2(type="button",onclick="sendOrderData()") Satın Al
+                        
+
+
+    // Eklenen JavaScript kodu
+    script.
+
+        function increaseQuantity(productID) {
+            var quantityInput = document.getElementById(`quantity-${productID}`);
+            var currentQuantity = parseInt(quantityInput.value);
+
+            // BUTTONS
+            const decreaseButton = document.getElementById(`decreaseButton-${productID}`);
+
+            // PRODUCT TOTAL PRICE
+            const productPriceDocument = document.getElementById(`productPrice-${productID}`);
+            const productTotalPriceDocument = document.getElementById(`productTotalPrice-${productID}`);
+            const price = parseFloat(productPriceDocument.textContent.trim().replace('TL', ''));
+    
+            if (currentQuantity < 1) {
+                decreaseButton.disabled = true;
+            } else {
+                decreaseButton.disabled = false;
+            }
+
+            // Update quantity
+            quantityInput.value = currentQuantity + 1;
+
+            // Update product total price
+            const productTotalPrice = price * Number(quantityInput.value);
+            productTotalPriceDocument.textContent = `${productTotalPrice.toFixed(2)} TL`;
+
+            // Calculate total price
+            updateTotalPrice();
+        }
+
+        function decreaseQuantity(productID) {
+            var quantityInput = document.getElementById(`quantity-${productID}`);
+            var currentQuantity = parseInt(quantityInput.value);
+
+            // BUTTONS
+            const decreaseButton = document.getElementById(`decreaseButton-${productID}`);
+
+            // PRODUCT TOTAL PRICE
+            const productPriceDocument = document.getElementById(`productPrice-${productID}`);
+            const productTotalPriceDocument = document.getElementById(`productTotalPrice-${productID}`);
+            const price = parseFloat(productPriceDocument.textContent.trim().replace('TL', ''));
+    
+            if (currentQuantity > 1) {
+                quantityInput.value = currentQuantity - 1;
+                decreaseButton.disabled = false;
+            } else {
+                quantityInput.value = 1;
+                decreaseButton.disabled = true;
+            }
+
+            // Update product total price
+            const productTotalPrice = price * Number(quantityInput.value);
+            productTotalPriceDocument.textContent = `${productTotalPrice.toFixed(2)} TL`;
+
+            // Calculate total price
+            updateTotalPrice();
+        }
+
+        function updateTotalPrice() {
+            var total = 0;
+            const productTotalPrice = document.querySelectorAll(".productTotalPrice");
+            productTotalPrice.forEach(p => {
+                const price = parseFloat(p.textContent.trim().replace('TL', ''));
+                total += price;
+            });
+
+            const totalPriceElement = document.getElementById("totalPrice");
+            if (totalPriceElement) {
+                totalPriceElement.textContent = `${total.toFixed(2)} TL`;
+            }
+        }
+
+
+
+    script.
+        async function sendOrderData() {
+            try {
+                var orderData = {
+                    products: []
+                };
+
+                // Kontrol ekleniyor
+                var productsData = !{JSON.stringify(products)};
+                if (productsData) {
+                    var products = productsData;
+
+                    for (var i = 0; i < products.length; i++) {
+                        var product = products[i];
+
+                        var productData = {
+                            id: product.product._id,
+                            name: product.product.name,
+                            quantity: document.getElementById(`quantity-${product.product._id}`).value,
+                            price: parseFloat(document.getElementById(`productPrice-${product.product._id}`).textContent.trim().replace('TL', ''))
+                        };
+                        orderData.products.push(productData);
+                    }
+
+                    // Toplam fiyatı ekle
+                    orderData.totalPrice = parseFloat(document.getElementById("totalPrice").textContent.trim().replace('TL', ''));
+
+                    // Sunucuya gönder
+                    const response = await fetch('/cart/buy', {
+                        method: 'POST',
+                        headers: {  
+                            'Content-Type': 'application/json',
+                            'X-CSRF-Token': !{JSON.stringify(csrfToken)} // CSRF koruması için token ekleyin
+                        },
+                        body: JSON.stringify({products : orderData}),
+                    });
+
+
+                    // Yönlendirme durumunu kontrol et
+                    if (response.redirected) {
+                        window.location.href = response.url; // Sunucunun yönlendirdiği URL'e git
+                    } else {
+                        const data = await response.json();
+                        // İşlem tamamlandıktan sonra yapılacak işlemler
+                        window.location.href = "/address/address";
+                    }
+                    
+
+                } else {
+                    console.error('Products data is undefined or not available.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }

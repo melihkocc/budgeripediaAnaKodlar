@@ -1,0 +1,38 @@
+extends ../layouts/mainLayout.pug
+block title 
+    title Ürün Ekle  
+
+block content 
+    .container-fluid.pt-5
+        .container 
+            .border-start.border-5.border-primary.ps-5.mb-5
+                h6.text-primary Budgeripedia
+                h1.display-5.text-uppercase.mb-0 Ürün Ekle
+            .row 
+                if errorMessage
+                    .alert.alert-danger #{errorMessage}
+                .col-lg-6.mx-auto.border.p-5 
+                    form(method="POST",action="/admin/add-product",enctype="multipart/form-data")
+                        input(type="hidden",name="_csrf",value=`${csrfToken}`)
+                        .mb-3
+                            label.form-label(for="name") Ürün İsmi
+                            input.form-control(type="text", id="name",name="name")
+                        .mb-3
+                            label.form-label(for="price") Ürün Fiyatı
+                            input.form-control(type="text", id="price",name="price")
+                        .mb-3
+                            label.form-label(for="description") Ürün Açıklaması
+                            textarea(class="form-control", name="description" ,id="description")
+                        .mb-3.form-check
+                            input.form-check-input(type="checkbox", id="status",name="status")
+                            label.form-check-label(for="status") Yayınlansın Mı?
+                        .mb-3
+                            h6 Kategoriler
+                            each category in subCategories
+                                .form-check
+                                    input.form-check-input(type="checkbox", value=`${category._id}`,name="categoryids")
+                                    label.form-check-label(for="flexCheckDefault") #{category.name}
+                        .mb-3
+                            input.form-control-file(type="file",name="image",required)
+                        button.btn.btn-primary(type="submit") Ekle
+

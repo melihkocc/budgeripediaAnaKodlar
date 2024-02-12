@@ -1,0 +1,13 @@
+extends ../layouts/mainLayout.pug
+block title 
+    title Admin 
+
+block content 
+    h1 Admin Sayfası
+    ul.list-group
+        a(href="/admin/add-category"): li.list-group-item Kategori Ekle
+        a(href="/admin/categories"): li.list-group-item Kategoriler
+        a(href="/admin/add-subcategory"): li.list-group-item Alt Kategori Ekle
+        a(href="/admin/subCategories"): li.list-group-item Alt Kategoriler
+        a(href="/admin/add-product"): li.list-group-item Ürün Ekle
+        a(href="/admin/products"): li.list-group-item Ürünler

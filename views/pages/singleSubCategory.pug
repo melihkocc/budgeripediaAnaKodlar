@@ -1,0 +1,76 @@
+extends ../layouts/mainLayout.pug
+
+block title 
+    title #{subCategory.name} 
+    script.
+        function submitForm() {
+            var form = document.getElementById("query");
+            form.submit();
+        }
+
+
+block content
+    .container.py-5
+        .row.g-5
+            .col-sm-12
+                nav(style="--bs-breadcrumb-divider: '>';", aria-label="breadcrumb")
+                    ol.breadcrumb
+                        li.breadcrumb-item
+                            a(href="/") Anasayfa
+                        li.breadcrumb-item
+                            a(href=`/category/${category._id}`) #{category.name}
+                        li.breadcrumb-item.active(aria-current="page") #{subCategory.name}
+                hr   
+                
+                .d-flex.align-items-center.justify-content-center.bg-primary
+                    form(method="POST",action=`/category/${category._id}`,id="query")
+                        input(type="hidden",name="_csrf",value=`${csrfToken}`)
+                        select.w-100.form-select(name="query",onchange="submitForm()")
+                            option(value="",selected) Varsayılan 
+                            option(value="1") Alfabetik A-Z
+                            option(value="2") Alfabetik Z-A
+                            option(value="3") Yeniden Eskiye
+                            option(value="4") Eskiden Yeniye
+                            option(value="5") Fiyat Artan
+                            option(value="6") Fiyat Azalan
+                            option(value="7") Rastgele
+                hr
+
+            .col-lg-3 
+                .mb-5
+                    h3.text-uppercase.border-start.border-5.border-primary.ps-3.mb-4 #{category.name}
+                    ul.list-group.overflow-auto(style="max-height: 200px;")
+                        each subCategory_s in subCategories
+                            if subCategory_s.status
+                                if subCategory._id.toString() == subCategory_s._id.toString() 
+                                    li.list-group-item: a.h6.py-2.px-3.mb-2.text-primary(href=`/sub-category/${category._id}/${subCategory_s._id}`): i.bi.bi-arrow-right.me-2 #{subCategory_s.name} 
+                                else 
+                                    li.list-group-item: a.h6.py-2.px-3.mb-2(href=`/sub-category/${category._id}/${subCategory_s._id}`): i.bi.bi-arrow-right.me-2 #{subCategory_s.name} 
+
+            .col-lg-9
+                .container-fluid 
+                    .row 
+                        each product in products
+                            .col-md-4.col-sm-12
+                                if product.status
+                                    .product-item.position-relative.bg-light.d-flex.flex-column.text-center
+                                        a(href=`/product/${product._id}`): img.w-100.img-fluid.mb-4(src=`${product.url}`, alt=`${product.name}`,style="height:200px;")
+                                        a(href=`/product/${product._id}`): h6.text-uppercase #{product.name}
+                                        span(style="height:50px") #{product.description}
+                                        if product.salePrice
+                                            .d-flex.justify-content-between.align-items-center.m-0.p-0
+                                                h5: s.text-primary.mb-0 #{product.price},00 TL
+                                                a(href=`/product/${product._id}`): h5 #{product.salePrice},00 TL
+                                        else 
+                                            a(href=`/product/${product._id}`): h5.text-primary.mb-0 #{product.price},00 TL
+
+                                        form(method="POST",action="/cart/add-cart").btn-action.d-flex.justify-content-center
+                                            input(type="hidden",name="_csrf",value=`${csrfToken}`)
+                                            input(type="hidden",name="productid",value=`${product._id}`)
+                                            input(type="hidden",name="quantity",value="1")
+                                            a.btn.btn-primary.py-2.px-3(href=""): button(type="submit",style="border:none;").bg-primary
+                                                i.bi.bi-cart.text-white
+                                            a.btn.btn-primary.py-2.px-3(href=`/product/${product._id}`)
+                                                i.bi.bi-eye
+
+

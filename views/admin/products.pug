@@ -1,0 +1,34 @@
+extends ../layouts/mainLayout.pug
+block title 
+    title Ürünler 
+
+block content     
+    if products.length > 0
+      table.table.table-bordered
+        thead 
+          tr 
+            td Ürün Resmi
+            td Ürün İsmi 
+            td Ürün Fiyatı 
+            td Yayında Mı?
+            td Kategorileri 
+            th 
+          tbody 
+            each product in products 
+              tr 
+                td: img(src=`${product.url}`, alt=`${product.name}`,width="150")
+                td #{product.name}
+                td #{product.price},00 Tl
+                td
+                    if product.status
+                        .fa-solid.fa-check 
+                    else 
+                        .fa-solid.fa-x
+                td
+                  each category in product.categories 
+                      | #{category.name} | 
+                td 
+                  a.btn.btn-primary.btn-sm.me-3(href=`/admin/edit-product/${product._id}`) Edit
+                  a.btn.btn-danger.btn-sm(href=`/admin/delete-product/${product._id}`) Delete
+    else 
+      h1 Category No

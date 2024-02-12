@@ -1,0 +1,136 @@
+extends ../layouts/mainLayout.pug
+
+block title 
+    title Adres
+
+
+block content
+
+    h1 Adres Yok Yeni Adres Ekle
+    .container.mt-5.mb-5
+        .row
+            .col-md-9.col-sm-12
+                .w-100
+                    .row.d-flex.justify-content-evenly
+                        .col-md-5.col-sm-12.border.border-1.border-primary.rounded-pill
+                            .w-100.d-flex.align-items-center.p-3
+                                p.p-0.m-0.border.border-1.border-secondary-subtle.px-3.py-2.rounded-circle.bg-primary 1
+                                p.p-0.m-0.ms-5.fs-5.text-primary
+                                    i.fa-solid.fa-location-dot
+                                    |  Adres Bilgileri
+                        .col-md-5.col-sm-12.border.border-1.border-secondary-subtle.rounded-pill
+                            .w-100.d-flex.align-items-center.p-3
+                                p.p-0.m-0.border.border-1.border-secondary-subtle.px-3.py-2.rounded-circle.bg-secondary-subtle 2
+                                p.p-0.m-0.ms-5.fs-5.text-secondary-subtle
+                                    i.fa-solid.fa-credit-card
+                                    |  Ödeme Bilgileri
+                .card.w-100.mt-5
+                    .card-body
+                        if errorMessage
+                            .alert.alert-danger #{errorMessage}
+                        form.row.g-3(method="POST",action="/address/address")
+                            input(type="hidden",name="_csrf",value=`${csrfToken}`)
+                            .col-md-6
+                                label.form-label(for="inputEmail4") Ülke Seçiniz
+                                    span.text-danger *
+                                select.form-select(name="country" aria-label="Default select example" required)
+                                    option(value="",disabled,selected) Ülke Seçiniz
+                                    option(value="Türkiye") Türkiye
+                            .col-md-6
+                                label.form-label(for="inputPassword4") İl Seçiniz
+                                    span.text-danger *
+                                select.form-select(id="city" name="city" required)
+                                    option(value="",disabled,selected) Şehir Seçiniz
+                            .col-12
+                                label.form-label(for="addressLine1") Adres
+                                    span.text-danger *
+                                textarea.form-control(id="addressLine1" name="addressLine1" placeholder="Adres Giriniz" required)
+                            .col-12
+                                label.form-label(for="addressLine2") Adres 2
+                                textarea.form-control(id="addressLine2" name="addressLine2")
+                            .col-md-6
+                                label.form-label(for="district") İlçe Giriniz
+                                    span.text-danger *
+                                input.form-control(id="district" name="district" required)
+                            .col-md-6
+                                label.form-label(for="semt") Semt Giriniz
+                                    span.text-danger *
+                                input.form-control(id="semt" name="semt" required)
+                            .col-md-6
+                                label.form-label(for="phoneNumber") Telefon Numarası
+                                    span.text-danger *
+                                input.form-control(type="text" id="phoneNumber" name="phoneNumber" pattern="[0-9]{11}" placeholder="Örnek: 05551234567" required)
+                                small Lütfen geçerli bir telefon numarası girin. (05551234567)
+                            .col-md-6
+                                label.form-label(for="postalCode") Posta Kodu Giriniz
+                                    span.text-danger *
+                                input.form-control(type="text" id="postalCode" name="postalCode" pattern="[0-9]{5}" placeholder="Lütfen geçerli bir posta kodu girin (örnek: 12345)" required)
+                            .col-12
+                                button.btn.btn-primary(type="submit") Adresi Kaydet
+            .col-md-3.col-sm-12
+                .accordion#accordionPanelsStayOpenExample
+                    .accordion-item
+                        h2.accordion-header
+                            button.accordion-button(type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne")
+                                .w-100.d-flex.justify-content-between.align-items-center
+                                    span Sipariş Özet
+                        #panelsStayOpen-collapseOne.accordion-collapse.collapse.show
+                            .accordion-body
+                                each item in cart.products.items
+                                    .w-100.d-flex.align-items-center
+                                        img.me-3(src=`${item.productId.url}` alt="img" width="50px")
+                                        .d-flex.flex-column
+                                            span.fw-bold(style="font-size: 12px;") #{item.productId.name}
+                                            span(style="font-size: 12px;") #{item.productId.description}
+                                            span(style="font-size: 12px;") #{item.quantity} Adet
+                                            if item.productId.salePrice
+                                                -var totalPrice = 0;
+                                                - totalPrice = item.productId.salePrice * item.quantity 
+                                                span(style="font-size: 12px;")
+                                                    | #{totalPrice.toFixed(2)} TL
+                                            else
+                                                -var totalPrice = 0;
+                                                - totalPrice = item.productId.price * item.quantity
+                                                span(style="font-size: 12px;")
+                                                    | #{totalPrice.toFixed(2)} TL
+                                    hr
+
+                    // Sepet toplamı
+                    .w-100.p-0.m-0.border.border-1.border-secondary-subtle.rounded-2.mt-5
+                        .w-100.d-flex.justify-content-between.align-items-center.p-3
+                            span Sepet Toplamı
+                            - var cartTotalPrice = 0;
+                            each item in cart.products.items
+                                - var totalPrice = 0;
+                                if item.productId.salePrice 
+                                    - totalPrice = item.productId.salePrice * item.quantity
+                                else 
+                                    - totalPrice = item.productId.price * item.quantity
+                                - cartTotalPrice += totalPrice
+                            span #{cartTotalPrice.toFixed(2)} TL
+                        .w-100.d-flex.justify-content-between.align-items-center.px-3.pb-3
+                            span Genel Toplamı
+                            span  #{cartTotalPrice.toFixed(2)} TL
+
+    script.
+        const iller = [
+            "Adana", "Adıyaman", "Afyonkarahisar", "Ağrı", "Amasya", "Ankara", "Antalya", "Artvin", 
+            "Aydın", "Balıkesir", "Bartın", "Batman", "Bayburt", "Bilecik", "Bingöl", "Bitlis", 
+            "Bolu", "Burdur", "Bursa", "Çanakkale", "Çankırı", "Çorum", "Denizli", "Diyarbakır", 
+            "Düzce", "Edirne", "Elazığ", "Erzincan", "Erzurum", "Eskişehir", "Gaziantep", "Giresun", 
+            "Gümüşhane", "Hakkâri", "Hatay", "Iğdır", "Isparta", "İstanbul", "İzmir", "Kahramanmaraş", 
+            "Karabük", "Karaman", "Kars", "Kastamonu", "Kayseri", "Kırıkkale", "Kırklareli", "Kırşehir", 
+            "Kilis", "Kocaeli", "Konya", "Kütahya", "Malatya", "Manisa", "Mardin", "Mersin", "Muğla", 
+            "Muş", "Nevşehir", "Niğde", "Ordu", "Osmaniye", "Rize", "Sakarya", "Samsun", "Şanlıurfa", 
+            "Siirt", "Sinop", "Sivas", "Şırnak", "Tekirdağ", "Tokat", "Trabzon", "Tunceli", "Uşak", 
+            "Van", "Yalova", "Yozgat", "Zonguldak"
+        ];
+
+        const ilSelect = document.getElementById("city");
+
+        iller.forEach((il, index) => {
+            const option = document.createElement("option");
+            option.value = il;
+            option.text = il;
+            ilSelect.appendChild(option);
+        });

@@ -1,0 +1,65 @@
+body
+
+  // Topbar Start
+  .container-fluid.border-bottom.d-none.d-lg-block
+    .row.gx-0
+      .col-lg-4.text-center.py-2
+        .d-inline-flex.align-items-center
+          i.bi.bi-geo-alt.fs-1.text-primary.me-3
+          .text-start
+            h6.text-uppercase.mb-1 Our Office
+            span 123 Street, New York, USA
+      .col-lg-4.text-center.border-start.border-end.py-2
+        .d-inline-flex.align-items-center
+          i.bi.bi-envelope-open.fs-1.text-primary.me-3
+          .text-start
+            h6.text-uppercase.mb-1 Email Us
+            span info@example.com
+      .col-lg-4.text-center.py-2
+        .d-inline-flex.align-items-center
+          i.bi.bi-phone-vibrate.fs-1.text-primary.me-3
+          .text-start
+            h6.text-uppercase.mb-1 Call Us
+            span +012 345 6789
+  // Topbar End
+
+  // Navbar Start
+  nav.navbar.navbar-expand-lg.bg-white.navbar-light.shadow-sm.py-3.py-lg-0.px-3.px-lg-0
+    a.navbar-brand.ms-lg-5(href="/")
+      h1.m-0.text-uppercase.text-dark
+        i.bi.bi-shop.fs-1.text-primary.me-3
+        | Budgeripedia
+    button.navbar-toggler(type="button", data-bs-toggle="collapse", data-bs-target="#navbarCollapse")
+      span.navbar-toggler-icon
+    .collapse.navbar-collapse#navbarCollapse
+      .navbar-nav.ms-auto.py-0
+        a.nav-item.nav-link.active(href="/") Home
+        a.nav-item.nav-link(href="about.html") About
+        a.nav-item.nav-link(href="service.html") Service
+        a.nav-item.nav-link(href="product.html") Product
+        
+        if isAuthenticated 
+          a.nav-item.nav-link(href="/logout") Çıkış Yap
+          a.nav-item.nav-link(href="/cart"): .fa-solid.fa-cart-shopping
+        else 
+          a.nav-item.nav-link(href="/login") Giriş Yap
+          a.nav-item.nav-link(href="/register") Kayıt Ol 
+        if isAdmin 
+          a.nav-item.nav-link(href="/admin/admin") Admin 
+        .nav-item.dropdown
+          a.nav-link.dropdown-toggle(href="#", data-bs-toggle="dropdown") Pages
+          .dropdown-menu.m-0
+            a.dropdown-item(href="price.html") Pricing Plan
+            a.dropdown-item(href="team.html") The Team
+            a.dropdown-item(href="testimonial.html") Testimonial
+            a.dropdown-item(href="blog.html") Blog Grid
+            a.dropdown-item(href="detail.html") Blog Detail
+        a.nav-item.nav-link.nav-contact.bg-primary.text-white.px-5.ms-lg-5(href="contact.html") Contact 
+          i.bi.bi-arrow-right
+  // Navbar End
+  ul.nav.justify-content-center
+    each category in categories
+      if category.status  
+        li.nav-item
+          a.nav-link(href=`/category/${category._id}`) #{category.name}
+  hr
