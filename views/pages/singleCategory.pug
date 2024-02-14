@@ -8,7 +8,6 @@ block title
             form.submit();
         }
 
-
 block content
 
     .container.py-5
@@ -23,10 +22,10 @@ block content
                 hr
                 
                 .d-flex.align-items-center.justify-content-center.bg-primary
-                    form(method="POST",action=`/category/${category._id}`,id="query")
-                        input(type="hidden",name="_csrf",value=`${csrfToken}`)
-                        select.w-100.form-select(name="query",onchange="submitForm()")
-                            option(value="",selected) Varsayılan 
+                    form(method="POST", action=`/category/${category._id}`, id="query")
+                        input(type="hidden", name="_csrf", value=`${csrfToken}`)
+                        select.w-100.form-select(name="query", onchange="submitForm()")
+                            option(value="", selected) Varsayılan 
                             option(value="1") Alfabetik A-Z
                             option(value="2") Alfabetik Z-A
                             option(value="3") Yeniden Eskiye
@@ -36,7 +35,6 @@ block content
                             option(value="7") Rastgele
                 hr  
 
-
             .col-lg-3 
                 .mb-5
                     h3.text-uppercase.border-start.border-5.border-primary.ps-3.mb-4 #{category.name}
@@ -45,12 +43,11 @@ block content
                             if subCategory.status
                                 li.list-group-item: a.h6.py-2.px-3.mb-2(href=`/sub-category/${category._id}/${subCategory._id}`): i.bi.bi-arrow-right.me-2 #{subCategory.name} 
 
-
             .col-lg-9
                 .container-fluid 
                     .row
                         each product in products
-                            .col-md-4.col-sm-12
+                            .col-md-4.col-sm-12.mt-5
                                 if product.status
                                     .product-item.position-relative.bg-light.d-flex.flex-column.text-center
                                         a(href=`/product/${product._id}`): img.w-100.img-fluid.mb-4(src=`${product.url}`, alt=`${product.name}`,style="height:200px;")
@@ -71,3 +68,16 @@ block content
                                             a.btn.btn-primary.py-2.px-3(href=`/product/${product._id}`)
                                                 i.bi.bi-eye
 
+                    //- Sayfalama bağlantıları
+                    .col-sm-12.d-flex.justify-content-center.mt-5
+                        nav(aria-label="Page navigation example")
+                            ul.pagination
+                                li.page-item(class=currentPage === 1 ? 'disabled' : '')
+                                    a.page-link(href=`/category/${category._id}?page=${currentPage - 1}`, aria-label="Previous")
+                                        span(aria-hidden="true") &laquo;
+                                each page in Array.from({ length: totalPages }, (_, i) => i + 1)
+                                    li.page-item(class=page === currentPage ? 'active' : '')
+                                        a.page-link(href=`/category/${category._id}?page=${page}`) #{page}
+                                li.page-item(class=currentPage === totalPages ? 'disabled' : '')
+                                    a.page-link(href=`/category/${category._id}?page=${currentPage + 1}`, aria-label="Next")
+                                        span(aria-hidden="true") &raquo;

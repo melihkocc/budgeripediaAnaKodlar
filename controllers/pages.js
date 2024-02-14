@@ -21,6 +21,8 @@ exports.getSingleProduct = async (req,res,next) => {
 }
 
 
+
+
 exports.getSingleCategory = async (req, res, next) => {
     try {
         const categoryid = req.params.categoryid;
@@ -30,54 +32,63 @@ exports.getSingleCategory = async (req, res, next) => {
         const subCategoriesIds = subCategories.map(subCategory => subCategory._id);
 
         const query = req.body.query;
-        let products;
+
+        let sortOptions = {};
 
         switch (query) {
             case '1':
                 // Ürünleri adlarına göre A-Z sırala
-                products = await Product.find({ categories: { $in: subCategoriesIds } }).sort({ name: 1 });
+                sortOptions = { name: 1 };
                 break;
             case '2':
                 // Ürünleri adlarına göre Z-A sırala
-                products = await Product.find({ categories: { $in: subCategoriesIds } }).sort({ name: -1 });
+                sortOptions = { name: -1 };
                 break;
             case '3':
                 // Ürünleri tarihlerine göre yeni-eski sırala
-                products = await Product.find({ categories: { $in: subCategoriesIds } }).sort({ date: -1 });
+                sortOptions = { date: -1 };
                 break;
             case '4':
                 // Ürünleri tarihlerine göre eski-yeni sırala
-                products = await Product.find({ categories: { $in: subCategoriesIds } }).sort({ date: 1 });
+                sortOptions = { date: 1 };
                 break;
             case '5':
                 // Ürünleri fiyatlarına göre düşük-yüksek sırala
-                products = await Product.find({ categories: { $in: subCategoriesIds } }).sort({ price: 1 });
+                sortOptions = { price: 1 };
                 break;
             case '6':
                 // Ürünleri fiyatlarına göre yüksek-düşük sırala
-                products = await Product.find({ categories: { $in: subCategoriesIds } }).sort({ price: -1 });
+                sortOptions = { price: -1 };
                 break;
             case '7':
                 // Ek özel sıralama kriterleri için gerekli işlemleri yap
-                products = await Product.find({ categories: { $in: subCategoriesIds } });
+                // Örneğin, bir özel sıralama kriteri belirlemek istiyorsanız burada işlemleri ekleyebilirsiniz.
                 break;
             default:
                 // Varsayılan durum için sıralama yapma
-                products = await Product.find({ categories: { $in: subCategoriesIds } });
                 break;
         }
+
+        const options = {
+            page: parseInt(req.query.page) || 1,
+            limit: 2, // Sayfa başına kaç ürün gösterileceği
+            sort: sortOptions
+        };
+
+        const result = await Product.paginate({ categories: { $in: subCategoriesIds } }, options);
 
         res.render("pages/singleCategory.pug", {
             category,
             subCategories,
-            products
+            products: result.docs,
+            currentPage: result.page,
+            totalPages: result.totalPages
         });
     } catch (error) {
         console.error("Hata oluştu:", error);
+        res.status(500).send('Internal Server Error');
     }
 };
-
-
 
 
 exports.getSingleSubCategory = async (req,res,next) => {
@@ -91,47 +102,59 @@ exports.getSingleSubCategory = async (req,res,next) => {
     const query = req.body.query
     let products;
 
+    let sortOptions = {};
 
-        switch (query) {
-            case '1':
-                // Ürünleri adlarına göre A-Z sırala
-                products = await Product.find({categories : subCategory._id}).sort({ name: 1 });
-                break;
-            case '2':
-                // Ürünleri adlarına göre Z-A sırala
-                products = await Product.find({categories : subCategory._id}).sort({ name: -1 });
-                break;
-            case '3':
-                // Ürünleri tarihlerine göre yeni-eski sırala
-                products = await Product.find({categories : subCategory._id}).sort({ date: -1 });
-                break;
-            case '4':
-                // Ürünleri tarihlerine göre eski-yeni sırala
-                products = await Product.find({categories : subCategory._id}).sort({ date: 1 });
-                break;
-            case '5':
-                // Ürünleri fiyatlarına göre düşük-yüksek sırala
-                products = await Product.find({categories : subCategory._id}).sort({ price: 1 });
-                break;
-            case '6':
-                // Ürünleri fiyatlarına göre yüksek-düşük sırala
-                products = await Product.find({categories : subCategory._id}).sort({ price: -1 });
-                break;
-            case '7':
-                // Ek özel sıralama kriterleri için gerekli işlemleri yap
-                products = await Product.find({categories : subCategory._id});
-                break;
-            default:
-                // Varsayılan durum için sıralama yapma
-                products = await Product.find({categories : subCategory._id});
-                break;
-        }
+    switch (query) {
+        case '1':
+            // Ürünleri adlarına göre A-Z sırala
+            sortOptions = { name: 1 };
+            break;
+        case '2':
+            // Ürünleri adlarına göre Z-A sırala
+            sortOptions = { name: -1 };
+            break;
+        case '3':
+            // Ürünleri tarihlerine göre yeni-eski sırala
+            sortOptions = { date: -1 };
+            break;
+        case '4':
+            // Ürünleri tarihlerine göre eski-yeni sırala
+            sortOptions = { date: 1 };
+            break;
+        case '5':
+            // Ürünleri fiyatlarına göre düşük-yüksek sırala
+            sortOptions = { price: 1 };
+            break;
+        case '6':
+            // Ürünleri fiyatlarına göre yüksek-düşük sırala
+            sortOptions = { price: -1 };
+            break;
+        case '7':
+            // Ek özel sıralama kriterleri için gerekli işlemleri yap
+            // Örneğin, bir özel sıralama kriteri belirlemek istiyorsanız burada işlemleri ekleyebilirsiniz.
+            break;
+        default:
+            // Varsayılan durum için sıralama yapma
+            break;
+    }
+
+        const options = {
+            page: parseInt(req.query.page) || 1,
+            limit: 2, // Sayfa başına kaç ürün gösterileceği
+            sort: sortOptions
+        };
+
+        const result = await Product.paginate({ categories: { $in: subCategory._id } }, options);
+
+
 
     res.render("pages/singleSubCategory",{
         category : category,
         subCategories : subCategories,
         subCategory : subCategory,
-        products : products
+        products: result.docs,
+        currentPage: result.page,
+        totalPages: result.totalPages
     })
 
 }

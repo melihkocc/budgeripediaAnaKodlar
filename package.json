@@ -4,7 +4,6 @@
   "description": "Budgeripedia Websitesi",
   "main": "script.js",
   "scripts": {
-    "start" : "node script.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Melih Koç",
@@ -22,6 +21,7 @@
     "express-session": "^1.18.0",
     "iyzipay": "^2.0.61",
     "mongoose": "^8.1.1",
+    "mongoose-paginate-v2": "^1.8.0",
     "pug": "^3.0.2",
     "uuid": "^9.0.1",
     "validator": "^13.11.0"
